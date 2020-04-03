@@ -1,0 +1,35 @@
+version: '2.4'
+services:
+  dev:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: base
+    depends_on:
+      - db
+    volumes:
+      - ./test_module:/mnt/extra-addons
+    links:
+      - db:db
+    ports:
+      - "8090:8069"
+
+  test:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: test
+    env_file:
+      - test_params.env
+    depends_on:
+      - db
+    links:
+      - db:db
+
+  db:
+    image: postgres:9.4
+    env_file:
+      - db.env
+    ports:
+      - "5450:5432"
+
